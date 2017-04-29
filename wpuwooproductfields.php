@@ -3,7 +3,7 @@
 Plugin Name: WPU Woo Product Fields
 Plugin URI: http://github.com/Darklg/WPUtilities
 Description: Quickly add fields to WooCommerce product & variations : handle display & save
-Version: 0.2
+Version: 0.3
 Author: Darklg
 Author URI: http://darklg.me/
 License: MIT License
@@ -43,6 +43,10 @@ class WPUWooProductFields {
             /* Select : default to yes/no */
             if (!isset($field['options']) || !is_array($field['options'])) {
                 $field['options'] = array(__('No'), __('Yes'));
+            }
+            /* Field is prefixed */
+            if (!isset($field['no_prefix_meta'])) {
+                $field['no_prefix_meta'] = false;
             }
             // Set default field group to variation
             if (!isset($field['variation']) && !isset($field['group'])) {
@@ -122,13 +126,12 @@ class WPUWooProductFields {
         $current_group = str_replace(array('woocommerce_product_options_', '_product_data'), '', current_filter());
 
         echo '<div class="options_group">';
-
         foreach ($this->fields as $id => $field) {
             if (!isset($field['group']) || $field['group'] != $current_group) {
                 continue;
             }
-            $field['id'] = '_' . $id;
-            $field['value'] = get_post_meta($post->ID, '_' . $id, true);
+            $field['id'] = $field['no_prefix_meta'] ? '' . $id : '_' . $id;
+            $field['value'] = get_post_meta($post->ID, $field['id'], true);
             $this->display_field($field);
         }
 
@@ -141,7 +144,7 @@ class WPUWooProductFields {
      */
     public function save_settings_fields($post_id) {
         foreach ($this->fields as $id => $field) {
-            $_id = '_' . $id;
+            $_id = $field['no_prefix_meta'] ? '' . $id : '_' . $id;
             /* For non checkbox : test if field exists */
             if ($field['type'] != 'checkbox') {
                 if (!isset($_POST[$_id])) {
@@ -167,8 +170,8 @@ class WPUWooProductFields {
             if (!isset($field['variation'], $variation_data[$field['variation']])) {
                 continue;
             }
-            $field['id'] = '_' . $id . '[' . $variation->ID . ']';
-            $field['value'] = get_post_meta($variation->ID, '_' . $id, true);
+            $field['id'] = $field['no_prefix_meta'] ? '' . $id : '_' . $id . '[' . $variation->ID . ']';
+            $field['value'] = get_post_meta($variation->ID, $field['no_prefix_meta'] ? '' . $id : '_' . $id, true);
             $this->display_field($field);
         }
     }
@@ -178,7 +181,7 @@ class WPUWooProductFields {
      */
     public function save_variation_settings_fields($post_id) {
         foreach ($this->fields as $id => $field) {
-            $_id = '_' . $id;
+            $_id = $field['no_prefix_meta'] ? '' . $id : '_' . $id;
             /* For non checkbox : test if field exists */
             if ($field['type'] != 'checkbox') {
                 if (!isset($_POST[$_id], $_POST[$_id][$post_id])) {
