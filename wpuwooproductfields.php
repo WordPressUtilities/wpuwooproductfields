@@ -3,7 +3,7 @@
 Plugin Name: WPU Woo Product Fields
 Plugin URI: http://github.com/Darklg/WPUtilities
 Description: Quickly add fields to WooCommerce product & variations : handle display & save
-Version: 0.3
+Version: 0.4
 Author: Darklg
 Author URI: http://darklg.me/
 License: MIT License
@@ -24,11 +24,11 @@ class WPUWooProductFields {
 
         // Variation Settings : Add & Save
         add_action('woocommerce_product_after_variable_attributes', array(&$this, 'variation_settings_fields'), 10, 3);
-        add_action('woocommerce_save_product_variation', array(&$this, 'save_variation_settings_fields'), 10, 2);
+        add_action('woocommerce_save_product_variation', array(&$this, 'save_variation_settings_fields'), 10, 1);
 
         // Common Settings : Add & Save
-        add_action('woocommerce_product_options_general_product_data', array(&$this, 'add_settings_fields'), 10, 2);
-        add_action('woocommerce_process_product_meta', array(&$this, 'save_settings_fields'), 10, 2);
+        add_action('woocommerce_product_options_general_product_data', array(&$this, 'add_settings_fields'), 10);
+        add_action('woocommerce_process_product_meta', array(&$this, 'save_settings_fields'), 10, 1);
     }
 
     /* ----------------------------------------------------------
@@ -132,7 +132,13 @@ class WPUWooProductFields {
             }
             $field['id'] = $field['no_prefix_meta'] ? '' . $id : '_' . $id;
             $field['value'] = get_post_meta($post->ID, $field['id'], true);
+            if (isset($field['separator_before']) && $field['separator_before']) {
+                echo '</div><div class="options_group">';
+            }
             $this->display_field($field);
+            if (isset($field['separator_after']) && $field['separator_after']) {
+                echo '</div><div class="options_group">';
+            }
         }
 
         echo '</div>';
@@ -170,7 +176,8 @@ class WPUWooProductFields {
             if (!isset($field['variation'], $variation_data[$field['variation']])) {
                 continue;
             }
-            $field['id'] = $field['no_prefix_meta'] ? '' . $id : '_' . $id . '[' . $variation->ID . ']';
+            $field['name'] = $field['no_prefix_meta'] ? $id : '_' . $id . '[' . $variation->ID . ']';
+            $field['id'] = $field['no_prefix_meta'] ? $id : '_' . $id . '_' . $variation->ID . '_';
             $field['value'] = get_post_meta($variation->ID, $field['no_prefix_meta'] ? '' . $id : '_' . $id, true);
             $this->display_field($field);
         }
