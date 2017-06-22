@@ -3,7 +3,7 @@
 Plugin Name: WPU Woo Product Fields
 Plugin URI: http://github.com/Darklg/WPUtilities
 Description: Quickly add fields to WooCommerce product & variations : handle display & save
-Version: 0.4
+Version: 0.4.1
 Author: Darklg
 Author URI: http://darklg.me/
 License: MIT License
@@ -162,6 +162,7 @@ class WPUWooProductFields {
             }
             $this->save_field_value($_id, $field, $post_id, $_tmp_val);
         }
+
     }
 
     /* ----------------------------------------------------------
@@ -172,6 +173,7 @@ class WPUWooProductFields {
      * Create new fields for variations
      */
     public function variation_settings_fields($loop, $variation_data, $variation) {
+        echo '<div class="form-row form-row-full">';
         foreach ($this->fields as $id => $field) {
             if (!isset($field['variation'], $variation_data[$field['variation']])) {
                 continue;
@@ -181,6 +183,7 @@ class WPUWooProductFields {
             $field['value'] = get_post_meta($variation->ID, $field['no_prefix_meta'] ? '' . $id : '_' . $id, true);
             $this->display_field($field);
         }
+        echo '</div>';
     }
 
     /**
