@@ -3,7 +3,7 @@
 Plugin Name: WPU Woo Product Fields
 Plugin URI: http://github.com/Darklg/WPUtilities
 Description: Quickly add fields to WooCommerce product & variations : handle display & save
-Version: 0.4.1
+Version: 0.4.2
 Author: Darklg
 Author URI: http://darklg.me/
 License: MIT License
@@ -38,6 +38,7 @@ class WPUWooProductFields {
     public function get_fields() {
         $fields = apply_filters('wpu_woo_variation_fields__fields', array());
         foreach ($fields as $id => $field) {
+            $field['type'] = isset($field['type']) ? $field['type'] : 'text';
             /* Default label to ID */
             $field['label'] = !isset($field['label']) ? $id : $field['label'];
             /* Select : default to yes/no */
@@ -93,13 +94,8 @@ class WPUWooProductFields {
                 $_val = $tmp_val;
             }
             break;
-        case 'checkbox':
-        case 'hidden':
-        case 'text':
-        case 'textarea':
-            $_val = esc_attr($tmp_val);
-            break;
         default:
+            $_val = esc_attr($tmp_val);
         }
 
         if ($_val !== false) {
