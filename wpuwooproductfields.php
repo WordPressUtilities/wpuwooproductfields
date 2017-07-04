@@ -3,7 +3,7 @@
 Plugin Name: WPU Woo Product Fields
 Plugin URI: http://github.com/Darklg/WPUtilities
 Description: Quickly add fields to WooCommerce product & variations : handle display & save
-Version: 0.4.2
+Version: 0.5.0
 Author: Darklg
 Author URI: http://darklg.me/
 License: MIT License
@@ -27,7 +27,17 @@ class WPUWooProductFields {
         add_action('woocommerce_save_product_variation', array(&$this, 'save_variation_settings_fields'), 10, 1);
 
         // Common Settings : Add & Save
-        add_action('woocommerce_product_options_general_product_data', array(&$this, 'add_settings_fields'), 10);
+        $hooks_ = array(
+            'woocommerce_product_options_general_product_data',
+            'woocommerce_product_options_inventory_product_data',
+            'woocommerce_product_options_shipping',
+            'woocommerce_product_options_attributes',
+            'woocommerce_product_options_related',
+            'woocommerce_product_options_advanced'
+        );
+        foreach ($hooks_ as $hook) {
+            add_action($hook, array(&$this, 'add_settings_fields'), 10);
+        }
         add_action('woocommerce_process_product_meta', array(&$this, 'save_settings_fields'), 10, 1);
     }
 
