@@ -3,7 +3,7 @@
 Plugin Name: WPU Woo Product Fields
 Plugin URI: http://github.com/Darklg/WPUtilities
 Description: Quickly add fields to WooCommerce product & variations : handle display & save
-Version: 0.5.0
+Version: 0.5.1
 Author: Darklg
 Author URI: http://darklg.me/
 License: MIT License
@@ -92,10 +92,10 @@ class WPUWooProductFields {
 
     public function save_field_value($field_id, $field, $post_id, $tmp_val) {
         $_val = false;
-
+        $tmp_val = strval($tmp_val);
         switch ($field['type']) {
         case 'select':
-            if (array_key_exists($tmp_val, $field['options'])) {
+            if (!empty($tmp_val) && array_key_exists($tmp_val, $field['options'])) {
                 $_val = $tmp_val;
             }
             break;
