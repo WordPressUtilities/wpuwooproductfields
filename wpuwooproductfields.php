@@ -201,7 +201,7 @@ class WPUWooProductFields {
 
             $field['name'] = $field['no_prefix_meta'] ? $id : '_' . $id . '[' . $variation->ID . ']';
             $field['id'] = $field['no_prefix_meta'] ? $id : '_' . $id . '_' . $variation->ID . '_';
-            $field['value'] = get_post_meta($variation->ID, $field['no_prefix_meta'] ? '' . $id : '_' . $id, true);
+            $field['value'] = $field['value'] = isset($field['value']) ? $field['value'] : get_post_meta($variation->ID, $field['no_prefix_meta'] ? '' . $id : '_' . $id, true);
             if (isset($field['separator_before']) && $field['separator_before']) {
                 echo '</div><div class="form-row form-row-full">';
             } else if (isset($field['separator_border_before']) && $field['separator_border_before']) {
